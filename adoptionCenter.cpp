@@ -48,7 +48,6 @@ AdoptionCenter::~AdoptionCenter() {
         delete animals[i];
     }
     delete[] animals;
-    delete[] sortedAnimals;
 }
 
 // TASK 4.3: AdoptionCenter::addAnimal(Animal*)
