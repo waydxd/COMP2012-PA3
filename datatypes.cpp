@@ -18,9 +18,11 @@ unsigned int sumStringChars(const string& str)
 
 // TASK 1.1: VaccinationStatus default constructor
 VaccinationStatus::VaccinationStatus() {
-
     // TODO
-
+    this->numVaccines = 0;
+    for (unsigned int i=0; i<VACCINE_TABLE_SIZE; ++i){
+        vaccineHashTable[i] = "";
+    }
 }
 
 // TASK 1.2: VaccinationStatus::addVaccine(const string&)
@@ -31,19 +33,26 @@ VaccinationStatus::VaccinationStatus() {
 //   If the vaccine already exists, output the second error message and return.
 void VaccinationStatus::addVaccine(const string& v)
 {
-    if (false /* TODO: Table is not half-empty */) {
+    if (this->numVaccines > VACCINE_TABLE_SIZE/2) {
         cout << "This system does not support having taken more than " << numVaccines << " vaccines." << endl;
         return;
     }
 
     // TODO: Quadratic probing
-
-    if (false /* TODO: Vaccine exists */) {
-        cout << "This animal has already taken " << v << "." << endl;
-        return;
+    int k = sumStringChars(v);
+    int hash = k % VACCINE_TABLE_SIZE;
+    for(int i = 0; i < VACCINE_TABLE_SIZE; i++){
+        int h = (hash + i*i) % VACCINE_TABLE_SIZE;
+        if(this->vaccineHashTable[h] == v){
+            cout << "This animal has already taken " << v << "." << endl;
+            return;
+        }
+        if(this->vaccineHashTable[h] == ""){
+            this->vaccineHashTable[h] = v;
+            this->numVaccines++;
+            return;
+        }
     }
-
-    // TODO: Quadratic probing
 }
 
 // TASK 1.3: VaccinationStatus::hasVaccine(const string&) const
@@ -52,6 +61,17 @@ bool VaccinationStatus::hasVaccine(const string& v) const
 {
     
     // TODO
+    int k = sumStringChars(v);
+    int hash = k % VACCINE_TABLE_SIZE;
+    for(int i = 0; i < VACCINE_TABLE_SIZE; i++){
+        int h = (hash + i*i) % VACCINE_TABLE_SIZE;
+        if(this->vaccineHashTable[h] == v){
+            return true;
+        }
+        if(this->vaccineHashTable[h] == ""){
+            return false;
+        }
+    }
 
     return false;
 }

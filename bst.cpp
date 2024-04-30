@@ -35,7 +35,19 @@ bool Filter::match(const Animal& a) const
 {
     
     // TODO
-
+    if(this->speciesFilter.find(a.getSpecies()) == string::npos){
+        return false;
+    }
+    if(this->healthFilter.find(a.getHealthCondition().description) == string::npos){
+        return false;
+    }
+    for(int i = 0; i < VACCINE_TABLE_SIZE; i++){
+        if(this->vaccineFilter[i] != ""){
+            if(!a.getVaccinationStatus().hasVaccine(this->vaccineFilter[i])){
+                return false;
+            }
+        }
+    }
     return true;
 }
 
@@ -56,14 +68,20 @@ void AnimalLLnode::print(unsigned int& ignoreCount, unsigned int& displayCount, 
 {
     
     // TODO
-
+    if(this->next != nullptr){
+        this->next->print(ignoreCount, displayCount, filter);
+    }
+    if(filter.match(*animal)){
+        this->animal->display(ignoreCount, displayCount);
+    }
+    return;
 }
 
 // TASK 2.3: BSTnode destructor
 BSTnode::~BSTnode()  {
     
     // TODO
-
+    delete head;
 }
 
 // TASK 2.4: BSTnode::addAnimal(const Animal* a)
@@ -74,7 +92,22 @@ BSTnode::~BSTnode()  {
 void BSTnode::addAnimal(const Animal* a) {
     
     // TODO
-
+    if(this->head == nullptr){
+        this->head = new AnimalLLnode(a, nullptr);
+        return;
+    }
+    AnimalLLnode* current = this->head;
+    while(current->next){
+        if(current->next->animal->getID() == a->getID()){
+            return;
+        }
+        if(current->next->animal->getID() < a->getID()){
+            AnimalLLnode* newNode = new AnimalLLnode(a, current->next);
+            current->next = newNode;
+            return;
+        }
+        current = current->next;
+    }
 }
 
 // TASK 2.5: BSTnode::addAnimal(const Animal* a)
@@ -85,7 +118,25 @@ void BSTnode::addAnimal(const Animal* a) {
 void BSTnode::removeAnimal(const Animal* a) {
     
     // TODO
-
+    if(this->head == nullptr){
+        return;
+    }
+    if(this->head->animal->getID() == a->getID()){ //if the head is the animal to be removed
+        AnimalLLnode* temp = this->head;
+        this->head = this->head->next;
+        delete temp;
+        return;
+    }
+    AnimalLLnode* current = this->head;
+    while(current->next){
+        if(current->next->animal->getID() == a->getID()){
+            AnimalLLnode* temp = current->next;
+            current->next = current->next->next;
+            delete temp;
+            return;
+        }
+        current = current->next;
+    }
 }
 
 
@@ -93,7 +144,7 @@ void BSTnode::removeAnimal(const Animal* a) {
 BST::~BST() {
     
     // TODO
-
+    delete root;
 }
 
 // TASK 3.2: BST::findMinNode()
@@ -103,7 +154,13 @@ BSTnode*& BST::findMinNode()
 {
     
     // TODO
-
+    if(this->root == nullptr){
+        return this->root;
+    }
+    if(this->root->left.root == nullptr){
+        return this->root;
+    }
+    return this->root->left.findMinNode();
 }
 
 // TASK 3.3: BST::insert(const Animal* a)
@@ -115,7 +172,17 @@ BSTnode*& BST::findMinNode()
 // - Otherwise, if the node is empty, create a new node using 'a'.
 void BST::insert(const Animal* a)
 {
-    
+    if(!root){
+        root = new BSTnode(a, comparator);
+        return;
+    }
+    if(comparator(a, root->head->animal) < 0){
+        root->left.insert(a);
+    }else if(comparator(a, root->head->animal) > 0){
+        root->right.insert(a);
+    }else{
+        root->addAnimal(a);
+    }
     // TODO
 
 }
@@ -131,9 +198,18 @@ void BST::insert(const Animal* a)
 //   + Else, *move* the linked list from the right subtree's min node to current root, and deallocate right subtree's min node.
 void BST::remove(const Animal* a)
 {
-    
     // TODO
-
+    if(!root){
+        return;
+    }
+    if(comparator(a, root->head->animal) < 0){
+        root->left.insert(a);
+    }else if(comparator(a, root->head->animal) > 0){
+        root->right.insert(a);
+    }else if(comparator(a, root->head->animal) == 0){
+        BSTnode* temp = this->findMinNode();
+        delete root->head;
+    }
 }
 
 // TASK 3.5: BST::print(unsigned int&, unsigned int&, const Filter&) const
