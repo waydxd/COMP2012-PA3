@@ -1,4 +1,7 @@
 #include "adoptionCenter.h"
+#include "animal.h"
+#include "bst.h"
+#include "datatypes.h"
 #include <iostream>
 using namespace std;
 
@@ -20,9 +23,13 @@ using namespace std;
 // - You can write lambda functions to pass into the BST constructors
 // - For comparing strings, look up the documentation for std::string::compare()
 // - Be careful when performing arithmetic calculations with unsigned int
-AdoptionCenter::AdoptionCenter() {
+AdoptionCenter::AdoptionCenter() : numAnimals(0) {
     
     // TODO
+    AnimalComparator compare = [](const Animal* a1, const Animal* a2){return a1->getID() - a2->getID();};
+    for(int i; i<ID;i++){
+        sortedAnimals[i]{compare};
+    }
 
 }
 

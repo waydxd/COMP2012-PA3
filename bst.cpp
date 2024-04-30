@@ -1,4 +1,5 @@
 #include "bst.h"
+#include <cstddef>
 using namespace std;
 
 /**
@@ -199,16 +200,29 @@ void BST::insert(const Animal* a)
 void BST::remove(const Animal* a)
 {
     // TODO
-    if(!root){
-        return;
-    }
+    if(!root){return;}
     if(comparator(a, root->head->animal) < 0){
-        root->left.insert(a);
+        root->left.remove(a);
     }else if(comparator(a, root->head->animal) > 0){
-        root->right.insert(a);
+        root->right.remove(a);
     }else if(comparator(a, root->head->animal) == 0){
-        BSTnode* temp = this->findMinNode();
-        delete root->head;
+        this->root->removeAnimal(a);
+        if(this->root->head){return;}
+        if(!this->findMinNode()){ //Either this node has 0 child or its child is in the right subtree
+            BSTnode *temp = this->root;
+            this->root = this->root->right.root;
+            delete temp;
+        }else if(this->root->right.root){ //Both left & right exist
+            BSTnode* temp = this->root->right.findMinNode();
+            this->root->head = temp->head;
+            temp->head = nullptr;
+            delete temp;
+        }
+        else{ // Only left
+            BSTnode *temp = this->root;
+            this->root = this->root->left.root;
+            delete temp;            
+        }
     }
 }
 
@@ -231,6 +245,15 @@ void BST::remove(const Animal* a)
 void BST::print(unsigned int& ignoreCount, unsigned int& displayCount, const Filter& filter) const
 {
     
-    // TOD
-
+    // TODO
+    if(!this->root){return;}
+    if(this->root->left.root){
+        this->root->left.print(ignoreCount, displayCount, filter);
+    }
+    if(filter.match(*root->head->animal)){
+        root->head->animal->display(ignoreCount, displayCount);
+    }
+    if(this->root->right.root){
+        this->root->right.print(ignoreCount, displayCount, filter);
+    }
 }
