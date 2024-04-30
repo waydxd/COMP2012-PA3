@@ -23,15 +23,20 @@ using namespace std;
 // - You can write lambda functions to pass into the BST constructors
 // - For comparing strings, look up the documentation for std::string::compare()
 // - Be careful when performing arithmetic calculations with unsigned int
-AdoptionCenter::AdoptionCenter() : numAnimals(0) {
-    
-    // TODO
-    AnimalComparator compare = [](const Animal* a1, const Animal* a2){return a1->getID() - a2->getID();};
-    for(int i; i<ID;i++){
-        sortedAnimals[i]{compare};
-    }
-
-}
+AdoptionCenter::AdoptionCenter() : numAnimals(0) ,
+sortedAnimals{
+    BST([](const Animal* a1, const Animal* a2){
+        return a1->getSpecies().compare(a2->getSpecies());}),
+    BST([](const Animal* a1, const Animal* a2){
+        return static_cast<int>(a1->getAge() - a2->getAge());
+    }),
+    BST([](const Animal* a1, const Animal* a2){
+        return static_cast<int>(a1->getHealthCondition().severity - a2->getHealthCondition().severity);
+    }),
+    BST([](const Animal* a1, const Animal* a2){
+        return static_cast<int>(a1->getVaccinationStatus().getTotalHashValue() - a2->getVaccinationStatus().getTotalHashValue());
+    })
+}{}
 
 // TASK 4.2: AdoptionCenter destructor
 // Deallocate any dynamic memory in this class.
@@ -39,7 +44,11 @@ AdoptionCenter::AdoptionCenter() : numAnimals(0) {
 AdoptionCenter::~AdoptionCenter() {
     
     // TODO
-
+    for(int i = 0; i < numAnimals; i++){
+        delete animals[i];
+    }
+    delete[] animals;
+    delete[] sortedAnimals;
 }
 
 // TASK 4.3: AdoptionCenter::addAnimal(Animal*)
@@ -51,7 +60,15 @@ AdoptionCenter::~AdoptionCenter() {
 void AdoptionCenter::addAnimal(Animal* a) {
     
     // TODO
-
+    Animal** newAnimals = new Animal*[numAnimals + 1];
+    copy(animals, animals + numAnimals, newAnimals);
+    newAnimals[numAnimals++] = a;
+    delete[] animals;
+    animals = newAnimals;
+    sortedAnimals[NAME].insert(a);
+    sortedAnimals[AGE].insert(a);
+    sortedAnimals[HEALTH].insert(a);
+    sortedAnimals[VACCINE].insert(a);
 }
 
 // TASK 4.4: AdoptionCenter::removeAnimal(unsigned int)
@@ -64,7 +81,22 @@ void AdoptionCenter::addAnimal(Animal* a) {
 bool AdoptionCenter::removeAnimal(unsigned int id) {
     
     // TODO
-
+    for(int i = 0; i < numAnimals;i++){
+        if(animals[i]->getID()==id){
+            Animal* temp = animals[i];
+            Animal** newAnimals = new Animal*[numAnimals - 1];
+            copy(animals, animals + i, newAnimals);
+            copy(animals + i + 1, animals + numAnimals, newAnimals + i);
+            delete[] animals;
+            animals = newAnimals;
+            numAnimals--;
+            sortedAnimals[NAME].remove(temp);
+            sortedAnimals[AGE].remove(temp);
+            sortedAnimals[HEALTH].remove(temp);
+            sortedAnimals[VACCINE].remove(temp);
+            return true;
+        }
+    }
     return false;
 }
 
@@ -74,7 +106,9 @@ void AdoptionCenter::incrementAge()
 {
     
     // TODO
-
+    for(int i = 0; i < numAnimals; i++){
+        animals[i]->incrementAge();
+    }
 }
 
 // TASK 4.6: AdoptionCenter::setAnimalHealthCondition(unsigned int, const HealthCondition&)
@@ -85,7 +119,14 @@ void AdoptionCenter::setAnimalHealthCondition(unsigned int id, const HealthCondi
 {
     
     // TODO
-
+    for(int i=0; i<numAnimals; i++){
+        if(animals[i]->getID() == id){
+            sortedAnimals[HEALTH].remove(animals[i]);
+            animals[i]->setHealthCondition(h);
+            sortedAnimals[HEALTH].insert(animals[i]);
+            return;
+        }
+    }
 }
 
 // TASK 4.7: AdoptionCenter:addAnimalVaccine(unsigned int, const string&)
@@ -96,7 +137,14 @@ void AdoptionCenter::addAnimalVaccine(unsigned int id, const string& v)
 {
     
     // TODO
-
+    for(int i = 0; i < numAnimals; i++){
+        if(animals[i]->getID() == id){
+            sortedAnimals[VACCINE].remove(animals[i]);
+            animals[i]->addVaccine(v);
+            sortedAnimals[VACCINE].insert(animals[i]);
+            return;
+        }
+    }
 }
 
 // TASK 4.8: AdoptionCenter::setAnimalSpecialNeeds(unsigned int, const std::string&)
@@ -106,7 +154,12 @@ void AdoptionCenter::setAnimalSpecialNeeds(unsigned int id, const std::string& n
 {
     
     // TODO
-
+    for(int i = 0; i < numAnimals; i++){
+        if(animals[i]->getID() == id){
+            animals[i]->setSpecialNeeds(n);
+            return;
+        }
+    }
 }
 
 
