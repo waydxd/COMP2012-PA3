@@ -43,7 +43,7 @@ bool Filter::match(const Animal& a) const
     if(!containAnyWords(a.getHealthCondition().description, this->healthFilter)){
         return false;
     }
-    for(int i = 0; i < VACCINE_TABLE_SIZE; i++){
+    for(unsigned int i = 0; i < VACCINE_TABLE_SIZE; i++){
         if(this->vaccineFilter[i] != ""){
             if(!a.getVaccinationStatus().hasVaccine(this->vaccineFilter[i])){
                 return false;

@@ -44,7 +44,7 @@ sortedAnimals{
 AdoptionCenter::~AdoptionCenter() {
     
     // TODO
-    for(int i = 0; i < numAnimals; i++){
+    for(unsigned int i = 0; i < numAnimals; i++){
         delete animals[i];
     }
     delete[] animals;
@@ -82,7 +82,7 @@ void AdoptionCenter::addAnimal(Animal* a) {
 bool AdoptionCenter::removeAnimal(unsigned int id) {
     
     // TODO
-    for(int i = 0; i < numAnimals;i++){
+    for(unsigned int i = 0; i < numAnimals;i++){
         if(animals[i]->getID()==id){
             Animal* temp = animals[i];
             Animal** newAnimals = new Animal*[numAnimals - 1];
@@ -108,7 +108,7 @@ void AdoptionCenter::incrementAge()
 {
     
     // TODO
-    for(int i = 0; i < numAnimals; i++){
+    for(unsigned int i = 0; i < numAnimals; i++){
         animals[i]->incrementAge();
     }
 }
@@ -121,7 +121,7 @@ void AdoptionCenter::setAnimalHealthCondition(unsigned int id, const HealthCondi
 {
     
     // TODO
-    for(int i=0; i<numAnimals; i++){
+    for(unsigned int i=0; i<numAnimals; i++){
         if(animals[i]->getID() == id){
             sortedAnimals[HEALTH].remove(animals[i]);
             animals[i]->setHealthCondition(h);
@@ -139,7 +139,7 @@ void AdoptionCenter::addAnimalVaccine(unsigned int id, const string& v)
 {
     
     // TODO
-    for(int i = 0; i < numAnimals; i++){
+    for(unsigned int i = 0; i < numAnimals; i++){
         if(animals[i]->getID() == id){
             sortedAnimals[VACCINE].remove(animals[i]);
             animals[i]->addVaccine(v);
@@ -156,7 +156,7 @@ void AdoptionCenter::setAnimalSpecialNeeds(unsigned int id, const std::string& n
 {
     
     // TODO
-    for(int i = 0; i < numAnimals; i++){
+    for(unsigned int i = 0; i < numAnimals; i++){
         if(animals[i]->getID() == id){
             animals[i]->setSpecialNeeds(n);
             return;

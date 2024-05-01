@@ -41,7 +41,7 @@ void VaccinationStatus::addVaccine(const string& v)
     // TODO: Quadratic probing
     int k = sumStringChars(v);
     int hash = k % VACCINE_TABLE_SIZE;
-    for(int i = 0; i < VACCINE_TABLE_SIZE; i++){
+    for(unsigned int i = 0; i < VACCINE_TABLE_SIZE; i++){
         int h = (hash + i*i) % VACCINE_TABLE_SIZE;
         if(this->vaccineHashTable[h] == v){
             cout << "This animal has already taken " << v << "." << endl;
@@ -63,7 +63,7 @@ bool VaccinationStatus::hasVaccine(const string& v) const
     // TODO
     int k = sumStringChars(v);
     int hash = k % VACCINE_TABLE_SIZE;
-    for(int i = 0; i < VACCINE_TABLE_SIZE; i++){
+    for(unsigned int i = 0; i < VACCINE_TABLE_SIZE; i++){
         int h = (hash + i*i) % VACCINE_TABLE_SIZE;
         if(this->vaccineHashTable[h] == v){
             return true;
