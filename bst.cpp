@@ -1,4 +1,5 @@
 #include "bst.h"
+#include "animal.h"
 #include <cstddef>
 using namespace std;
 
@@ -36,10 +37,10 @@ bool Filter::match(const Animal& a) const
 {
     
     // TODO
-    if(this->speciesFilter.find(a.getSpecies()) == string::npos){
+    if(!containAnyWords(a.getSpecies(), this->speciesFilter)){
         return false;
     }
-    if(this->healthFilter.find(a.getHealthCondition().description) == string::npos){
+    if(!containAnyWords(a.getHealthCondition().description, this->healthFilter)){
         return false;
     }
     for(int i = 0; i < VACCINE_TABLE_SIZE; i++){
@@ -69,7 +70,7 @@ void AnimalLLnode::print(unsigned int& ignoreCount, unsigned int& displayCount, 
 {
     
     // TODO
-    if(this->next != nullptr){
+    if(this->next){
         this->next->print(ignoreCount, displayCount, filter);
     }
     if(filter.match(*animal)){
@@ -82,7 +83,11 @@ void AnimalLLnode::print(unsigned int& ignoreCount, unsigned int& displayCount, 
 BSTnode::~BSTnode()  {
     
     // TODO
-    delete head;
+    while(this->head){
+        AnimalLLnode* ptr = this->head->next;
+        delete this->head;
+        this->head = ptr;
+    }
 }
 
 // TASK 2.4: BSTnode::addAnimal(const Animal* a)
@@ -93,9 +98,17 @@ BSTnode::~BSTnode()  {
 void BSTnode::addAnimal(const Animal* a) {
     
     // TODO
-    if(this->head == nullptr){
+    if(!this->head){
         this->head = new AnimalLLnode(a, nullptr);
         return;
+    }
+    if(head->animal->getID() == a->getID()){
+            return;
+        }
+    if(head->animal->getID() < a->getID()){
+            AnimalLLnode* ptr = new AnimalLLnode(a,this->head);
+            this->head = ptr;
+            return;
     }
     AnimalLLnode* current = this->head;
     while(current->next){
@@ -109,6 +122,7 @@ void BSTnode::addAnimal(const Animal* a) {
         }
         current = current->next;
     }
+    current->next = new AnimalLLnode(a, nullptr);
 }
 
 // TASK 2.5: BSTnode::addAnimal(const Animal* a)
@@ -200,7 +214,7 @@ void BST::insert(const Animal* a)
 void BST::remove(const Animal* a)
 {
     // TODO
-    if(!root){return;}
+    if(!this->root->head){return;}
     if(comparator(a, root->head->animal) < 0){
         root->left.remove(a);
     }else if(comparator(a, root->head->animal) > 0){
@@ -208,20 +222,20 @@ void BST::remove(const Animal* a)
     }else if(comparator(a, root->head->animal) == 0){
         this->root->removeAnimal(a);
         if(this->root->head){return;}
-        if(!this->findMinNode()){ //Either this node has 0 child or its child is in the right subtree
-            BSTnode *temp = this->root;
-            this->root = this->root->right.root;
-            delete temp;
-        }else if(this->root->right.root){ //Both left & right exist
-            BSTnode* temp = this->root->right.findMinNode();
-            this->root->head = temp->head;
-            temp->head = nullptr;
-            delete temp;
+        if(!this->root->right.isEmpty() && !this->root->left.isEmpty()){
+            BSTnode* temp = root->right.root;
+            while(temp->left.root!=nullptr){
+                temp = temp->left.root;
+            }            
+            this->root->head = (temp->head);
+            temp->head = new AnimalLLnode(a);
+            root->right.remove(a);
         }
-        else{ // Only left
+        else { 
             BSTnode *temp = this->root;
-            this->root = this->root->left.root;
-            delete temp;            
+            this->root = (this->root->left.isEmpty())? root->right.root : root->left.root;
+            temp->left.root = temp->right.root = nullptr;
+            delete temp;
         }
     }
 }
@@ -250,9 +264,7 @@ void BST::print(unsigned int& ignoreCount, unsigned int& displayCount, const Fil
     if(this->root->left.root){
         this->root->left.print(ignoreCount, displayCount, filter);
     }
-    if(filter.match(*root->head->animal)){
-        root->head->animal->display(ignoreCount, displayCount);
-    }
+    this->root->head->print(ignoreCount, displayCount, filter);
     if(this->root->right.root){
         this->root->right.print(ignoreCount, displayCount, filter);
     }

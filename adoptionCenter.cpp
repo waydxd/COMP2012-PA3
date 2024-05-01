@@ -23,7 +23,7 @@ using namespace std;
 // - You can write lambda functions to pass into the BST constructors
 // - For comparing strings, look up the documentation for std::string::compare()
 // - Be careful when performing arithmetic calculations with unsigned int
-AdoptionCenter::AdoptionCenter() : numAnimals(0) ,
+AdoptionCenter::AdoptionCenter() : animals(nullptr),numAnimals(0),
 sortedAnimals{
     BST([](const Animal* a1, const Animal* a2){
         return a1->getSpecies().compare(a2->getSpecies());}),
@@ -62,7 +62,9 @@ void AdoptionCenter::addAnimal(Animal* a) {
     Animal** newAnimals = new Animal*[numAnimals + 1];
     copy(animals, animals + numAnimals, newAnimals);
     newAnimals[numAnimals++] = a;
-    delete[] animals;
+    if(animals){
+        delete[] animals;
+    }
     animals = newAnimals;
     sortedAnimals[NAME].insert(a);
     sortedAnimals[AGE].insert(a);
@@ -93,6 +95,7 @@ bool AdoptionCenter::removeAnimal(unsigned int id) {
             sortedAnimals[AGE].remove(temp);
             sortedAnimals[HEALTH].remove(temp);
             sortedAnimals[VACCINE].remove(temp);
+            delete temp;
             return true;
         }
     }

@@ -1,4 +1,4 @@
-CPPFLAGS = -std=c++11 -g -Wall -fsanitize=address,undefined #-static-libgcc -static-libstdc++ -static
+CPPFLAGS = -std=c++11 -g -Wall -fsanitize=leak,address,undefined #-static-libgcc -static-libstdc++ -static
 
 SHARED  = adoptionCenter.cpp animal.cpp bst.cpp datatypes.cpp randomAnimalGenerator.cpp
 SRCS	= main.cpp $(SHARED)
