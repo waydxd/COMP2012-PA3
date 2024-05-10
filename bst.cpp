@@ -214,7 +214,8 @@ void BST::insert(const Animal* a)
 void BST::remove(const Animal* a)
 {
     // TODO
-    if(!this->root->head){return;}
+    if(!this->root){return;}
+    // if(!this->root->head){return;}
     if(comparator(a, root->head->animal) < 0){
         root->left.remove(a);
     }else if(comparator(a, root->head->animal) > 0){

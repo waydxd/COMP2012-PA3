@@ -84,13 +84,19 @@ bool AdoptionCenter::removeAnimal(unsigned int id) {
     // TODO
     for(unsigned int i = 0; i < numAnimals;i++){
         if(animals[i]->getID()==id){
+            if(numAnimals == 1){
+                delete animals[0];
+                delete[] animals;
+                animals = nullptr;
+                numAnimals = 0;
+                return true;
+            }
             Animal* temp = animals[i];
             Animal** newAnimals = new Animal*[numAnimals - 1];
             copy(animals, animals + i, newAnimals);
-            copy(animals + i + 1, animals + numAnimals, newAnimals + i);
+            copy(animals + i + 1, animals + numAnimals--, newAnimals + i);
             delete[] animals;
             animals = newAnimals;
-            numAnimals--;
             sortedAnimals[NAME].remove(temp);
             sortedAnimals[AGE].remove(temp);
             sortedAnimals[HEALTH].remove(temp);

@@ -17,6 +17,5 @@ for input_value in range(1, 51):
         #print(output.strip())
         #print(expected_output.strip())
         print(f"Output for input {input_value} does not match!")
-
-
+print("No news is good news!")
        
